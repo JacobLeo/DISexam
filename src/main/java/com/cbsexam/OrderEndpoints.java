@@ -27,12 +27,10 @@ public class OrderEndpoints {
     // Call our controller-layer in order to get the order from the DB
     Order order = OrderController.getOrder(idOrder);
 
-    // TODO: Add Encryption to JSON FIX
+    // TODO: Add Encryption to JSON 
     // We convert the java object to json with GSON library imported in Maven
     String json = new Gson().toJson(order);
 
-    // Encrypts our json file with the encryptDecryptXOR method from utils
-    json = Encryption.encryptDecryptXOR(json);
 
     // Return a response with status 200 and JSON as type
     return Response.status(200).type(MediaType.APPLICATION_JSON).entity(json).build();
@@ -46,12 +44,9 @@ public class OrderEndpoints {
     // Call our controller-layer in order to get the order from the DB
     ArrayList<Order> orders = OrderController.getOrders();
 
-    // TODO: Add Encryption to JSON FIX
+    // TODO: Add Encryption to JSON
     // We convert the java object to json with GSON library imported in Maven
     String json = new Gson().toJson(orders);
-
-    // Encrypts our json file with the encryptDecryptXOR method from utils
-    json = Encryption.encryptDecryptXOR(json);
 
     // Return a response with status 200 and JSON as type
     return Response.status(200).type(MediaType.TEXT_PLAIN_TYPE).entity(json).build();
@@ -70,6 +65,9 @@ public class OrderEndpoints {
 
     // Get the user back with the added ID and return it to the user
     String json = new Gson().toJson(createdOrder);
+
+    // Encrypts our json file with the encryptDecryptXOR method from utils
+    json = Encryption.encryptDecryptXOR(json);
 
     // Return the data to the user
     if (createdOrder != null) {
