@@ -51,7 +51,7 @@ public class UserEndpoints {
     // Get a list of users
     ArrayList<User> users = UserController.getUsers();
 
-    // TODO: Add Encryption to JSON
+    // TODO: Add Encryption to JSON FIX
     // Transfer users to json in order to return it to the user
     String json = new Gson().toJson(users);
 
