@@ -1,21 +1,32 @@
 package utils;
 
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.SecureRandom;
+import java.util.Arrays;
+
 import org.bouncycastle.util.encoders.Hex;
 
 public final class Hashing {
 
-  // TODO: You should add a salt and make this secure
+  // TODO: You should add a salt and make this secure FIX
   public static String md5(String rawString) {
     try {
 
       // We load the hashing algoritm we wish to use.
       MessageDigest md = MessageDigest.getInstance("MD5");
 
+      // Gets salt byte array
+      byte [] salt = getSalt();
+      // Loading the salt
+      md.update(salt);
+
       // We convert to byte array
       byte[] byteArray = md.digest(rawString.getBytes());
+
 
       // Initialize a string buffer
       StringBuffer sb = new StringBuffer();
@@ -26,9 +37,9 @@ public final class Hashing {
       }
 
       //Convert back to a single string and return
-      return sb.toString();
+      return sb.toString() + Arrays.toString(salt);
 
-    } catch (java.security.NoSuchAlgorithmException e) {
+    } catch (NoSuchAlgorithmException | NoSuchProviderException e) {
 
       //If somethings breaks
       System.out.println("Could not hash string");
@@ -57,5 +68,14 @@ public final class Hashing {
     }
 
     return rawString;
+  }
+
+  private static byte[] getSalt() throws NoSuchAlgorithmException, NoSuchProviderException {
+    // https://howtodoinjava.com/security/how-to-generate-secure-password-hash-md5-sha-pbkdf2-bcrypt-examples/#md5-salt
+    // Genereate random byte array
+    SecureRandom sr = SecureRandom.getInstance("SHA1PRNG", "SUN");
+    byte[] salt = new byte[16];
+    sr.nextBytes(salt);
+    return salt;
   }
 }
