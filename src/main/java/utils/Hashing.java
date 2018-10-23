@@ -48,11 +48,16 @@ public final class Hashing {
     return null;
   }
 
-  // TODO: You should add a salt and make this secure
+  // TODO: You should add a salt and make this secure FIX EVT KIG PÅ HVORDAN SALT BLIVER GEMT
   public static String sha(String rawString) {
     try {
       // We load the hashing algoritm we wish to use.
       MessageDigest digest = MessageDigest.getInstance("SHA-256");
+
+      // Gets salt byte array
+      byte [] salt = getSalt();
+      // Loading the salt
+      digest.update(salt);
 
       // We convert to byte array
       byte[] hash = digest.digest(rawString.getBytes(StandardCharsets.UTF_8));
@@ -61,9 +66,9 @@ public final class Hashing {
       String sha256hex = new String(Hex.encode(hash));
 
       // And return the string
-      return sha256hex;
+      return sha256hex + Arrays.toString(salt);
 
-    } catch (NoSuchAlgorithmException e) {
+    } catch (NoSuchAlgorithmException | NoSuchProviderException e) {
       e.printStackTrace();
     }
 

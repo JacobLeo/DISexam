@@ -108,9 +108,9 @@ public class UserController {
     }
 
     // Insert the user in the DB
-    // TODO: Hash the user password before saving it. FIX
+    // TODO: Hash the user password before saving it. FIX (SHA)
     // Password hashed with md5
-    String hashedPassw = Hashing.md5(user.getPassword());
+    String hashedPassw = Hashing.sha(user.getPassword());
     user.setPassword(hashedPassw);
     
     int userID = dbCon.insert(
