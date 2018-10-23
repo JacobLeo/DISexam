@@ -137,4 +137,14 @@ public class UserController {
     // Return user
     return user;
   }
+
+  public static void deleteUser (int userId) {
+    Log.writeLog(UserController.class.getName(), userId, "Deleting", 0);
+
+    if (dbCon == null){
+      dbCon = new DatabaseController();
+    }
+
+    dbCon.delete("DELETE FROM user where id="+userId);
+  }
 }

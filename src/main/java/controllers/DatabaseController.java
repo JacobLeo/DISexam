@@ -110,4 +110,29 @@ public class DatabaseController {
     // Return the resultset which at this point will be null
     return result;
   }
+
+  public int delete (String sql){
+
+    if (connection == null)
+      connection = getConnection();
+
+    PreparedStatement statement = null;
+    int result = 0;
+
+    try {
+      statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+
+      result = statement.executeUpdate();
+
+      ResultSet generatedKey = statement.getGeneratedKeys();
+
+      if (generatedKey.next()) {
+        return generatedKey.getInt(1);
+      }
+    }
+    catch (SQLException e) {
+      e.printStackTrace();
+    }
+    return result;
+  }
 }
