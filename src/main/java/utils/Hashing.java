@@ -19,10 +19,8 @@ public final class Hashing {
       // We load the hashing algoritm we wish to use.
       MessageDigest md = MessageDigest.getInstance("MD5");
 
-      // Gets salt byte array
-      byte [] salt = getSalt();
       // Loading the salt
-      md.update(salt);
+      md.update(getSalt().getBytes());
 
       // We convert to byte array
       byte[] byteArray = md.digest(rawString.getBytes());
@@ -37,7 +35,7 @@ public final class Hashing {
       }
 
       //Convert back to a single string and return
-      return sb.toString() + Arrays.toString(salt);
+      return sb.toString();
 
     } catch (NoSuchAlgorithmException | NoSuchProviderException e) {
 
@@ -54,10 +52,8 @@ public final class Hashing {
       // We load the hashing algoritm we wish to use.
       MessageDigest digest = MessageDigest.getInstance("SHA-256");
 
-      // Gets salt byte array
-      byte [] salt = getSalt();
-      // Loading the salt
-      digest.update(salt);
+     // Loading the salt 
+      digest.update(getSalt().getBytes());
 
       // We convert to byte array
       byte[] hash = digest.digest(rawString.getBytes(StandardCharsets.UTF_8));
@@ -66,7 +62,7 @@ public final class Hashing {
       String sha256hex = new String(Hex.encode(hash));
 
       // And return the string
-      return sha256hex + Arrays.toString(salt);
+      return sha256hex;
 
     } catch (NoSuchAlgorithmException | NoSuchProviderException e) {
       e.printStackTrace();
@@ -75,12 +71,7 @@ public final class Hashing {
     return rawString;
   }
 
-  private static byte[] getSalt() throws NoSuchAlgorithmException, NoSuchProviderException {
-    // https://howtodoinjava.com/security/how-to-generate-secure-password-hash-md5-sha-pbkdf2-bcrypt-examples/#md5-salt
-    // Genereate random byte array
-    SecureRandom sr = SecureRandom.getInstance("SHA1PRNG", "SUN");
-    byte[] salt = new byte[16];
-    sr.nextBytes(salt);
-    return salt;
+  private static String getSalt() throws NoSuchAlgorithmException, NoSuchProviderException {
+    return "CBS";
   }
 }
