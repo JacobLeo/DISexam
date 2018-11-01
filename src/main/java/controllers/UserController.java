@@ -147,4 +147,16 @@ public class UserController {
 
     dbCon.delete("DELETE FROM user where id="+userId);
   }
+
+  public static User updateUser (User user){
+    Log.writeLog(UserController.class.getName(), user, "Updating", 0);
+
+    if (dbCon == null){
+      dbCon = new DatabaseController();
+    }
+
+    dbCon.update(user);
+
+    return user;
+  }
 }

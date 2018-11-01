@@ -5,11 +5,7 @@ import com.google.gson.Gson;
 import controllers.UserController;
 import java.util.ArrayList;
 import javax.print.attribute.standard.Media;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import model.User;
@@ -60,7 +56,7 @@ public class UserEndpoints {
     String json = new Gson().toJson(users);
 
     // Encrypted the json file with XOR method from utils
-    json = Encryption.encryptDecryptXOR(json);
+    //json = Encryption.encryptDecryptXOR(json);
 
     // Return the users with the status code 200
     return Response.status(200).type(MediaType.APPLICATION_JSON).entity(json).build();
@@ -113,10 +109,25 @@ public class UserEndpoints {
     return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity(choosenUserId.getId()).build();
   }
 
-  // TODO: Make the system able to update users
-  public Response updateUser(String x) {
+  // TODO: Make the system able to update users fix
+  @PUT
+  @Path("update/{idUser}")
+  @Consumes(MediaType.APPLICATION_JSON)
+  public Response updateUser(@PathParam("idUser") int idUser, String body) {
 
-    // Return a response with status 200 and JSON as type
-    return Response.status(400).entity("Endpoint not implemented yet").build();
+    User choosenUser = new Gson().fromJson(body, User.class);
+
+    User updatedUser = UserController.updateUser(choosenUser);
+
+    String json = new Gson().toJson(updatedUser);
+
+
+    if (updatedUser != null) {
+      return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity(json).build();
+    }
+    else {
+      return Response.status(400).entity("Could not update user").build();
+    }
   }
 }
+
