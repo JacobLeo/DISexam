@@ -53,7 +53,7 @@ public class UserEndpoints {
     Log.writeLog(this.getClass().getName(), this, "Get all users", 0);
 
     // Get a list of users
-    ArrayList<User> users = userCache.getUsers(false); 
+    ArrayList<User> users = userCache.getUsers(false);
 
     // TODO: Add Encryption to JSON FIX
     // Transfer users to json in order to return it to the user
