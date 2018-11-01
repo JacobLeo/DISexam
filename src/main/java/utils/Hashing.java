@@ -37,7 +37,7 @@ public final class Hashing {
       //Convert back to a single string and return
       return sb.toString();
 
-    } catch (NoSuchAlgorithmException | NoSuchProviderException e) {
+    } catch (NoSuchAlgorithmException e) {
 
       //If somethings breaks
       System.out.println("Could not hash string");
@@ -64,14 +64,14 @@ public final class Hashing {
       // And return the string
       return sha256hex;
 
-    } catch (NoSuchAlgorithmException | NoSuchProviderException e) {
+    } catch (NoSuchAlgorithmException e) {
       e.printStackTrace();
     }
 
     return rawString;
   }
 
-  private static String getSalt() throws NoSuchAlgorithmException, NoSuchProviderException {
-    return "CBS";
+  private static String getSalt() {
+    return Config.getSalt();
   }
 }
