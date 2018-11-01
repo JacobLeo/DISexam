@@ -1,5 +1,6 @@
 package com.cbsexam;
 
+import cache.OrderCache;
 import com.google.gson.Gson;
 import controllers.OrderController;
 import java.util.ArrayList;
@@ -43,8 +44,10 @@ public class OrderEndpoints {
   @Path("/")
   public Response getOrders() {
 
+    OrderCache orderCache = new OrderCache();
+
     // Call our controller-layer in order to get the order from the DB
-    ArrayList<Order> orders = OrderController.getOrders();
+    ArrayList<Order> orders = orderCache.getOrders(false);
 
     // TODO: Add Encryption to JSON FIX
     // We convert the java object to json with GSON library imported in Maven
