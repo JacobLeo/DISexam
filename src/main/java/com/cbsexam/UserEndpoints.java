@@ -15,6 +15,7 @@ import utils.Log;
 @Path("user")
 public class UserEndpoints {
 
+  private static UserCache userCache = new UserCache();
   /**
    * @param idUser
    * @return Responses
@@ -42,8 +43,6 @@ public class UserEndpoints {
   @GET
   @Path("/")
   public Response getUsers() {
-
-    UserCache userCache = new UserCache();
 
     // Write to log that we are here
     Log.writeLog(this.getClass().getName(), this, "Get all users", 0);

@@ -28,12 +28,10 @@ public class ProductCache {
 
     if (forceUpdate
         || ((this.created + this.ttl) >= (System.currentTimeMillis() / 1000L))
-        || (this.products == null)) {
+        || (this.products.isEmpty())) {
 
       // Get products from controller, since we wish to update.
       ArrayList<Product> products = ProductController.getProducts();
-
-      System.out.println("Nu har den kørt");
 
       // Set products for the instance and set created timestamp
       this.products = products;

@@ -16,6 +16,7 @@ import utils.Encryption;
 
 @Path("product")
 public class ProductEndpoints {
+  private static ProductCache productCache = new ProductCache();
 
   /**
    * @param idProduct
@@ -43,8 +44,6 @@ public class ProductEndpoints {
   @GET
   @Path("/")
   public Response getProducts() {
-
-    ProductCache productCache = new ProductCache();
 
     // Call our controller-layer in order to get the order from the DB
     ArrayList<Product> products = productCache.getProducts(false);
