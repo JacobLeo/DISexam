@@ -8,13 +8,15 @@ public class User {
   public String email;
   private String password;
   private long createdTime;
+  private String authToken;
 
-  public User(int id, String firstname, String lastname, String password, String email) {
+  public User(int id, String firstname, String lastname, String password, String email, String authToken) {
     this.id = id;
     this.firstname = firstname;
     this.lastname = lastname;
     this.password = password;
     this.email = email;
+    this.authToken = authToken;
   }
 
   public int getId() {
@@ -63,5 +65,13 @@ public class User {
 
   public void setCreatedTime(long createdTime) {
     this.createdTime = createdTime;
+  }
+
+  public String getAuthToken() {
+    return authToken;
+  }
+
+  public void setAuthToken(String authToken) {
+    this.authToken = authToken;
   }
 }

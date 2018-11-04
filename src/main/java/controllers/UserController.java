@@ -1,9 +1,13 @@
 package controllers;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Random;
+
 import model.User;
+import utils.Config;
 import utils.Hashing;
 import utils.Log;
 
@@ -38,7 +42,8 @@ public class UserController {
                 rs.getString("first_name"),
                 rs.getString("last_name"),
                 rs.getString("password"),
-                rs.getString("email"));
+                rs.getString("email"),
+                rs.getString("auth_token"));
 
         // return the create object
         return user;
@@ -81,7 +86,8 @@ public class UserController {
                 rs.getString("first_name"),
                 rs.getString("last_name"),
                 rs.getString("password"),
-                rs.getString("email"));
+                rs.getString("email"),
+                rs.getString("auth_token"));
 
         // Add element to list
         users.add(user);
@@ -148,15 +154,67 @@ public class UserController {
     dbCon.delete("DELETE FROM user where id="+userId);
   }
 
-  public static User updateUser (User user){
+  public static boolean updateUser (User user){
     Log.writeLog(UserController.class.getName(), user, "Updating", 0);
 
     if (dbCon == null){
       dbCon = new DatabaseController();
     }
 
-    dbCon.update(user);
 
-    return user;
+    String newPassword = Hashing.sha(user.getPassword());
+    user.setPassword(newPassword);
+
+    boolean affected = dbCon.update("UPDATE USER SET first_name = " + "\'" + user.getFirstname() + "\',"
+    + "  last_name = "+ "\'" + user.getLastname() + "\'," + " password = " + "\'" + user.getPassword() + "\'," +
+            " email = " + "\'" + user.getEmail() + "\'" + "WHERE id = " + "\'" + user.getId() + "\'");
+
+    return affected;
+  }
+
+  public static String authenticateUser (User user) {
+    int id = 0;
+    String newAuthToken = null;
+
+    if (dbCon == null){
+      dbCon = new DatabaseController();
+    }
+
+    if (user.getAuthToken() != null){
+      try {
+        ResultSet rs = dbCon.query("SELECT * FROM user WHERE auth_token = \'" + user.getAuthToken()+"\'");
+        if (rs.next()){
+          System.out.print(rs.getString("auth_token"));
+          return rs.getString("auth_token");
+        }
+      } catch (SQLException e) {
+        e.printStackTrace();
+      }
+    }
+
+    try {
+    ResultSet rs = dbCon.query("SELECT id FROM user WHERE "
+    + "email = " + "\'" + user.getEmail() + "\'" + "AND password = " + "\'" + Hashing.sha(user.getPassword()) + "\'");
+      if (rs.next()){
+        id = rs.getInt("id");
+      }
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+
+    if (id == 0) {
+      return null;
+    }
+
+    else {
+      newAuthToken = Hashing.sha(String.valueOf(new Random().nextDouble()));
+      user.setAuthToken(newAuthToken);
+
+      dbCon.update("UPDATE user SET " + "auth_token = " + "\'" + newAuthToken + "\'" + "WHERE " +
+              "email = " + "\'" + user.getEmail() + "\'" + "AND password = " + "\'" +
+              Hashing.sha(user.getPassword()) + "\'");
+
+      return newAuthToken;
+    }
   }
 }
