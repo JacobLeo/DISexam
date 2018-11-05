@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Random;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import model.User;
 import utils.Config;
 import utils.Hashing;
@@ -144,15 +145,6 @@ public class UserController {
     return user;
   }
 
-  public static void deleteUser (int userId) {
-    Log.writeLog(UserController.class.getName(), userId, "Deleting", 0);
-
-    if (dbCon == null){
-      dbCon = new DatabaseController();
-    }
-
-    dbCon.delete("DELETE FROM user where id="+userId);
-  }
 
   public static boolean updateUser (User user){
     Log.writeLog(UserController.class.getName(), user, "Updating", 0);
@@ -217,4 +209,17 @@ public class UserController {
       return newAuthToken;
     }
   }
+
+  public static Boolean deleteUser (int userId){
+
+    if (dbCon == null){
+      dbCon = new DatabaseController();
+    }
+
+    boolean affected = dbCon.update("DELETE FROM user WHERE id = " + "\'" + userId + "\'");
+
+    return affected;
+
+  }
+
 }

@@ -105,18 +105,21 @@ public class UserEndpoints {
     return Response.status(401).entity("Unathorized access").build();
   }
 
-  // TODO: Make the system able to delete users
-  @POST
-  @Path("/deleteuser")
-  @Consumes(MediaType.APPLICATION_JSON)
-  public Response deleteUser(String userID) {
+  // TODO: Make the system able to delete users fix
+  @DELETE
+  @Path("/delete/{idUser}")
+  public Response deleteUser(@PathParam("idUser") int idUser) {
 
-    User choosenUserId = new Gson().fromJson(userID, User.class);
+    boolean affected = UserController.deleteUser(idUser);
 
-    UserController.deleteUser(choosenUserId.getId());
+    if (affected){
+      userCache.getUsers(true);
+      return Response.status(200).entity(idUser + " er nu slettet").build();
+    }
 
-    // Return a response with status 200 and JSON as type
-    return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity(choosenUserId.getId()).build();
+    else {
+      return Response.status(400).build();
+    }
   }
 
   // TODO: Make the system able to update users fix
