@@ -3,11 +3,20 @@ package com.cbsexam;
 import cache.UserCache;
 import com.google.gson.Gson;
 import controllers.UserController;
+
+import java.security.Key;
 import java.util.ArrayList;
-import javax.print.attribute.standard.Media;
+import java.util.Date;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
+
+
+import io.jsonwebtoken.security.Keys;
 import model.User;
 import utils.Encryption;
 import utils.Log;
@@ -92,18 +101,36 @@ public class UserEndpoints {
 
     User user = new Gson().fromJson(x, User.class);
 
-    String authToken = UserController.authenticateUser(user);
+    User loginUser = UserController.authenticateUser(user);
 
-    if (authToken != null){
-      String json = new Gson().toJson(user);
-      user.setAuthToken(authToken);
-      System.out.println(user.getAuthToken());
-      return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity(json).build();
+    if (loginUser != null) {
+      Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+      long time = System.currentTimeMillis();
+      String jwt = Jwts.builder()
+              .signWith(key)
+              .setSubject(Integer.toString(loginUser.getId()))
+              .setIssuedAt(new Date(time))
+              .setExpiration(new Date(time + 1200000))
+              .compact();
+
+      loginUser.setToken(jwt);
+
+      String json = new Gson().toJson(jwt);
+
+      return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity("You're logged in. You're token is: " + json).build();
+
     }
+    else if (loginUser != null && loginUser.getToken() != null) {
 
-    // Return a response with status 200 and JSON as type
-    return Response.status(401).entity("Unathorized access").build();
-  }
+      String currentToken = loginUser.getToken();
+
+      return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity("You're logged in. You're token is: " + currentToken).build();
+    }
+      else {
+
+        return Response.status(401).entity("Unathorized access").build();
+      }
+    }
 
   // TODO: Make the system able to delete users fix
   @DELETE

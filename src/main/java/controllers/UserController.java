@@ -43,8 +43,7 @@ public class UserController {
                 rs.getString("first_name"),
                 rs.getString("last_name"),
                 rs.getString("password"),
-                rs.getString("email"),
-                rs.getString("auth_token"));
+                rs.getString("email"));
 
         // return the create object
         return user;
@@ -87,8 +86,7 @@ public class UserController {
                 rs.getString("first_name"),
                 rs.getString("last_name"),
                 rs.getString("password"),
-                rs.getString("email"),
-                rs.getString("auth_token"));
+                rs.getString("email"));
 
         // Add element to list
         users.add(user);
@@ -164,51 +162,47 @@ public class UserController {
     return affected;
   }
 
-  public static String authenticateUser (User user) {
+  public static User authenticateUser (User user) {
+
     int id = 0;
-    String newAuthToken = null;
 
     if (dbCon == null){
       dbCon = new DatabaseController();
     }
 
-    if (user.getAuthToken() != null){
-      try {
-        ResultSet rs = dbCon.query("SELECT * FROM user WHERE auth_token = " + user.getAuthToken()+"\'");
-        if (rs.next()){
-          System.out.print(rs.getString("auth_token"));
-          return rs.getString("auth_token");
-        }
-      } catch (SQLException e) {
-        e.printStackTrace();
-      }
-    }
+    // Build the query for DB
+    String sql = "SELECT * FROM user where email = " + "\'" + user.getEmail()+ "\'" +
+            "AND password = " + "\'" + Hashing.sha(user.getPassword()) + "\'";
+
+    // Actually do the query
+    ResultSet rs = dbCon.query(sql);
+    User foundUser = null;
 
     try {
-    ResultSet rs = dbCon.query("SELECT id FROM user WHERE "
-    + "email = " + user.getEmail() + "AND password = " + Hashing.sha(user.getPassword()) );
-      if (rs.next()){
-        id = rs.getInt("id");
+      // Get first object, since we only have one
+      if (rs.next()) {
+        foundUser =
+                new User(
+                        rs.getInt("id"),
+                        rs.getString("first_name"),
+                        rs.getString("last_name"),
+                        rs.getString("password"),
+                        rs.getString("email"));
+
+        // return the create object
+        return foundUser;
+      } else {
+        System.out.println("No user found");
       }
-    } catch (SQLException e) {
-      e.printStackTrace();
+    } catch (SQLException ex) {
+      System.out.println(ex.getMessage());
     }
 
-    if (id == 0) {
-      return null;
-    }
+    // Return null
+    return foundUser;
 
-    else {
-      newAuthToken = Hashing.sha(String.valueOf(new Random().nextDouble()));
-      user.setAuthToken(newAuthToken);
-
-      dbCon.update("UPDATE user SET " + "auth_token = "  + newAuthToken + "WHERE " +
-              "email = " + user.getEmail() + "AND password = " +
-              Hashing.sha(user.getPassword()));
-
-      return newAuthToken;
-    }
   }
+
 
   public static Boolean deleteUser (int userId){
 
