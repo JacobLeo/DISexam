@@ -174,7 +174,7 @@ public class UserController {
 
     if (user.getAuthToken() != null){
       try {
-        ResultSet rs = dbCon.query("SELECT * FROM user WHERE auth_token = \'" + user.getAuthToken()+"\'");
+        ResultSet rs = dbCon.query("SELECT * FROM user WHERE auth_token = " + user.getAuthToken()+"\'");
         if (rs.next()){
           System.out.print(rs.getString("auth_token"));
           return rs.getString("auth_token");
@@ -186,7 +186,7 @@ public class UserController {
 
     try {
     ResultSet rs = dbCon.query("SELECT id FROM user WHERE "
-    + "email = " + "\'" + user.getEmail() + "\'" + "AND password = " + "\'" + Hashing.sha(user.getPassword()) + "\'");
+    + "email = " + user.getEmail() + "AND password = " + Hashing.sha(user.getPassword()) );
       if (rs.next()){
         id = rs.getInt("id");
       }
@@ -202,9 +202,9 @@ public class UserController {
       newAuthToken = Hashing.sha(String.valueOf(new Random().nextDouble()));
       user.setAuthToken(newAuthToken);
 
-      dbCon.update("UPDATE user SET " + "auth_token = " + "\'" + newAuthToken + "\'" + "WHERE " +
-              "email = " + "\'" + user.getEmail() + "\'" + "AND password = " + "\'" +
-              Hashing.sha(user.getPassword()) + "\'");
+      dbCon.update("UPDATE user SET " + "auth_token = "  + newAuthToken + "WHERE " +
+              "email = " + user.getEmail() + "AND password = " +
+              Hashing.sha(user.getPassword()));
 
       return newAuthToken;
     }
@@ -216,7 +216,7 @@ public class UserController {
       dbCon = new DatabaseController();
     }
 
-    boolean affected = dbCon.update("DELETE FROM user WHERE id = " + "\'" + userId + "\'");
+    boolean affected = dbCon.update("DELETE FROM user WHERE id = " + userId );
 
     return affected;
 
