@@ -2,6 +2,7 @@ package com.cbsexam;
 
 import cache.OrderCache;
 import com.google.gson.Gson;
+import controllers.LineItemController;
 import controllers.OrderController;
 import java.util.ArrayList;
 import javax.ws.rs.Consumes;
@@ -11,6 +12,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
+import model.LineItem;
 import model.Order;
 import utils.Encryption;
 
@@ -30,12 +33,15 @@ public class OrderEndpoints {
     // Call our controller-layer in order to get the order from the DB
     Order order = OrderController.getOrder(idOrder);
 
+    ArrayList<LineItem> lineItems = LineItemController.getLineItemsForOrder(idOrder);
+    order.setLineItems(lineItems);
+
     // TODO: Add Encryption to JSON FIX
     // We convert the java object to json with GSON library imported in Maven
     String json = new Gson().toJson(order);
 
     // Encrypted the json file with XOR method from utils
-    json = Encryption.encryptDecryptXOR(json);
+    //json = Encryption.encryptDecryptXOR(json);
 
     // Return a response with status 200 and JSON as type
     return Response.status(200).type(MediaType.APPLICATION_JSON).entity(json).build();
@@ -54,7 +60,7 @@ public class OrderEndpoints {
     String json = new Gson().toJson(orders);
 
     // Encrypted the json file with XOR method from utils
-    json = Encryption.encryptDecryptXOR(json);
+    //json = Encryption.encryptDecryptXOR(json);
 
     // Return a response with status 200 and JSON as type
     return Response.status(200).type(MediaType.APPLICATION_JSON).entity(json).build();

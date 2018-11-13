@@ -3,11 +3,11 @@ package controllers;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import model.Address;
-import model.LineItem;
-import model.Order;
-import model.User;
+
+import model.*;
 import utils.Log;
+
+import javax.sound.sampled.Line;
 
 public class OrderController {
 
@@ -25,22 +25,84 @@ public class OrderController {
     }
 
     // Build SQL string to query
-    String sql = "SELECT * FROM orders where id=" + id;
+    String sql = "SELECT * FROM orders\n" +
+            "inner join\n" +
+            "user ON orders.user_id = user.id\n" +
+            "inner join \n" +
+            "line_item ON orders.id = line_item.order_id \n" +
+            "inner join \n" +
+            "address AS ba ON orders.billing_address_id = ba.id\n" +
+            "inner join \n" +
+            "address as sa ON orders.shipping_address_id = sa.id\n" +
+            "inner join \n" +
+            "product ON line_item.product_id  = product.id \n" +
+            "where orders.id = " + id;
 
     // Do the query in the database and create an empty object for the results
     ResultSet rs = dbCon.query(sql);
     Order order = null;
+    User user = null;
+    ArrayList<LineItem> lineItems = new ArrayList<>();
+    LineItem lineItem = null;
+    Product product = null;
+    Address billingAddress = null;
+    Address shippingAddress = null;
 
     try {
       if (rs.next()) {
 
         // Perhaps we could optimize things a bit here and get rid of nested queries.
-        User user = UserController.getUser(rs.getInt("user_id"));
+        /*User user = UserController.getUser(rs.getInt("user_id"));
         ArrayList<LineItem> lineItems = LineItemController.getLineItemsForOrder(rs.getInt("id"));
         Address billingAddress = AddressController.getAddress(rs.getInt("billing_address_id"));
-        Address shippingAddress = AddressController.getAddress(rs.getInt("shipping_address_id"));
+        Address shippingAddress = AddressController.getAddress(rs.getInt("shipping_address_id")); */
 
-        // Create an object instance of order from the database dataa
+        // Create an object instance of order from the database data
+
+        user =
+                new User(
+                        rs.getInt("user_id"),
+                        rs.getString("first_name"),
+                        rs.getString("last_name"),
+                        rs.getString("password"),
+                        rs.getString("email"));
+
+        product =
+                new Product(
+                        rs.getInt("id"),
+                        rs.getString("name"),
+                        rs.getString("sku"),
+                        rs.getInt("price"),
+                        rs.getString("description"),
+                        rs.getInt("stock"));
+
+
+          lineItems.add(
+                  new LineItem(
+                          rs.getInt("id"),
+                          product,
+                          rs.getInt("quantity"),
+                          rs.getFloat("price")));
+
+
+        billingAddress =
+                new Address(
+                          rs.getInt("ba.id"),
+                          rs.getString("ba.name"),
+                          rs.getString("ba.street_address"),
+                          rs.getString("ba.city"),
+                          rs.getString("ba.zipcode")
+                );
+
+        shippingAddress =
+                new Address(
+                        rs.getInt("sa.id"),
+                        rs.getString("sa.name"),
+                        rs.getString("sa.street_address"),
+                        rs.getString("sa.city"),
+                        rs.getString("sa.zipcode")
+                );
+
         order =
             new Order(
                 rs.getInt("id"),
@@ -53,7 +115,7 @@ public class OrderController {
                 rs.getLong("updated_at"));
 
         // Returns the build order
-        return order;
+        return order; 
       } else {
         System.out.println("No order found");
       }
@@ -75,8 +137,10 @@ public class OrderController {
     if (dbCon == null) {
       dbCon = new DatabaseController();
     }
-    // Orders instead of order in sql statement 
+    // Orders instead of order in sql statement
+
     String sql = "SELECT * FROM orders";
+
 
     ResultSet rs = dbCon.query(sql);
     ArrayList<Order> orders = new ArrayList<Order>();
@@ -85,10 +149,12 @@ public class OrderController {
       while(rs.next()) {
 
         // Perhaps we could optimize things a bit here and get rid of nested queries.
-        User user = UserController.getUser(rs.getInt("user_id"));
+         User user = UserController.getUser(rs.getInt("user_id"));
         ArrayList<LineItem> lineItems = LineItemController.getLineItemsForOrder(rs.getInt("id"));
         Address billingAddress = AddressController.getAddress(rs.getInt("billing_address_id"));
         Address shippingAddress = AddressController.getAddress(rs.getInt("shipping_address_id"));
+
+
 
         // Create an order from the database data
         Order order =
