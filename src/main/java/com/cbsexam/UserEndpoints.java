@@ -1,22 +1,19 @@
 package com.cbsexam;
 
 import cache.UserCache;
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.google.gson.Gson;
 import controllers.UserController;
 
-import java.security.Key;
 import java.util.ArrayList;
-import java.util.Date;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
 
-
-import io.jsonwebtoken.security.Keys;
 import model.User;
 import utils.Encryption;
 import utils.Log;
@@ -24,6 +21,7 @@ import utils.Log;
 @Path("user")
 public class UserEndpoints {
 
+  User loginUser = null;
   private static UserCache userCache = new UserCache();
   /**
    * @param idUser
@@ -101,30 +99,20 @@ public class UserEndpoints {
 
     User user = new Gson().fromJson(x, User.class);
 
-    User loginUser = UserController.authenticateUser(user);
+    loginUser = UserController.authenticateUser(user);
 
     if (loginUser != null) {
-      Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
-      long time = System.currentTimeMillis();
-      String jwt = Jwts.builder()
-              .signWith(key)
-              .setSubject(Integer.toString(loginUser.getId()))
-              .setIssuedAt(new Date(time))
-              .setExpiration(new Date(time + 1200000))
-              .compact();
 
-      loginUser.setToken(jwt);
+      Algorithm algorithm = Algorithm.HMAC256("secret");
+      String token = JWT.create()
+              .withIssuer("auth0")
+              .sign(algorithm);
 
-      String json = new Gson().toJson(jwt);
+      user.setToken(token);
 
-      return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity("You're logged in. You're token is: " + json).build();
+      String json = new Gson().toJson(token);
 
-    }
-    else if (loginUser != null && loginUser.getToken() != null) {
-
-      String currentToken = loginUser.getToken();
-
-      return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity("You're logged in. You're token is: " + currentToken).build();
+      return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity("You're logged in. Your token is: " + json).build();
     }
       else {
 
@@ -137,17 +125,16 @@ public class UserEndpoints {
   @Path("/delete/{idUser}")
   public Response deleteUser(@PathParam("idUser") int idUser) {
 
-    boolean affected = UserController.deleteUser(idUser);
+      boolean affected = UserController.deleteUser(idUser);
 
-    if (affected){
-      userCache.getUsers(true);
-      return Response.status(200).entity(idUser + " er nu slettet").build();
+      if (affected){
+        userCache.getUsers(true);
+        return Response.status(200).entity(idUser + " er nu slettet").build();
+      }
+      else {
+        return Response.status(400).build();
+      }
     }
-
-    else {
-      return Response.status(400).build();
-    }
-  }
 
   // TODO: Make the system able to update users fix
   @PUT
@@ -167,5 +154,6 @@ public class UserEndpoints {
       return Response.status(400).entity("Could not update user").build();
     }
   }
+
 }
 
