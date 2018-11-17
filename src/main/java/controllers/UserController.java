@@ -6,6 +6,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Random;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
 import com.sun.org.apache.xpath.internal.operations.Bool;
 import model.User;
 import utils.Config;
@@ -162,7 +164,9 @@ public class UserController {
     return affected;
   }
 
-  public static User authenticateUser (User user) {
+  public static String authenticateUser (User user) {
+
+    String token;
 
     int id = 0;
 
@@ -189,17 +193,22 @@ public class UserController {
                         rs.getString("password"),
                         rs.getString("email"));
 
-        // return the create object
-        return foundUser;
+        Algorithm algorithm = Algorithm.HMAC256("secret");
+        token = JWT.create()
+                .withIssuer("auth0")
+                .sign(algorithm);
+        
+        return token;
+
       } else {
-        System.out.println("No user found");
+        return null;
       }
     } catch (SQLException ex) {
       System.out.println(ex.getMessage());
     }
 
     // Return null
-    return foundUser;
+    return null;
 
   }
 

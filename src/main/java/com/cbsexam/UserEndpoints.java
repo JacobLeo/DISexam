@@ -106,7 +106,7 @@ public class UserEndpoints {
 
     User user = new Gson().fromJson(x, User.class);
 
-    loginUser = UserController.authenticateUser(user);
+    //loginUser = UserController.authenticateUser(user);
 
     if (loginUser != null) {
 

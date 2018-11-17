@@ -109,6 +109,11 @@ public class DatabaseController {
       }
     } catch (SQLException e) {
       System.out.println(e.getMessage());
+      try {
+        connection.rollback();
+      } catch (SQLException e1) {
+        e1.printStackTrace();
+      }
     }
     finally {
       try {
