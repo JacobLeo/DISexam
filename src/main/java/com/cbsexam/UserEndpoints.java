@@ -4,24 +4,26 @@ import cache.UserCache;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.google.gson.Gson;
 import controllers.UserController;
 
 import java.util.ArrayList;
+import java.util.Date;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 
 import model.User;
+import utils.Config;
 import utils.Encryption;
 import utils.Log;
 
 @Path("user")
 public class UserEndpoints {
 
-  User loginUser = null;
   private static UserCache userCache = new UserCache();
   /**
    * @param idUser
@@ -106,18 +108,23 @@ public class UserEndpoints {
 
     User user = new Gson().fromJson(x, User.class);
 
-    //loginUser = UserController.authenticateUser(user);
+    User loginUser = null;
+
+    loginUser = UserController.authenticateUser(user);
 
     if (loginUser != null) {
 
-      Algorithm algorithm = Algorithm.HMAC256("secret");
+      Algorithm algorithm = Algorithm.HMAC256(Config.getTOKENKEY());
       String token = JWT.create()
               .withIssuer("auth0")
+              .withIssuedAt(new Date(System.currentTimeMillis()))
+              .withExpiresAt(new Date (System.currentTimeMillis() + 900000))
+              .withSubject(Integer.toString(loginUser.getId()))
               .sign(algorithm);
 
-      user.setToken(token);
+      loginUser.setToken(token);
 
-      String json = new Gson().toJson(token);
+      String json = new Gson().toJson(loginUser.getToken());
 
       return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity("You're logged in. Your token is: " + json).build();
     }
@@ -129,18 +136,30 @@ public class UserEndpoints {
 
   // TODO: Make the system able to delete users fix
   @DELETE
-  @Path("/delete/{idUser}")
-  public Response deleteUser(@PathParam("idUser") int idUser) {
+  @Path("/delete")
+  @Consumes(MediaType.APPLICATION_JSON)
+  public Response deleteUser(String x) {
 
-      boolean affected = UserController.deleteUser(idUser);
+    User choosenUser = new Gson().fromJson(x, User.class);
+
+    System.out.println(choosenUser.getId());
+
+    if (verifyToken(choosenUser.getToken(), choosenUser)) {
+
+      boolean affected = UserController.deleteUser(choosenUser.getId());
 
       if (affected){
         userCache.getUsers(true);
-        return Response.status(200).entity(idUser + " er nu slettet").build();
+        return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity(choosenUser.getId() + " er nu slettet").build();
       }
       else {
-        return Response.status(400).build();
+        return Response.status(400).entity("Something must have gone wrong").build();
       }
+    }
+    else{
+      return Response.status(401).entity("Unathorized access").build();
+    }
+
     }
 
   // TODO: Make the system able to update users fix
@@ -159,6 +178,21 @@ public class UserEndpoints {
     }
     else {
       return Response.status(400).entity("Could not update user").build();
+    }
+  }
+
+  public boolean verifyToken (String token, User user){
+    try {
+      Algorithm algorithm = Algorithm.HMAC256(Config.getTOKENKEY());
+      JWTVerifier verifier = JWT.require(algorithm)
+                            .withIssuer("auth0")
+                            .withSubject(Integer.toString(user.getId()))
+                            .build();
+      verifier.verify(token);
+      return true;
+    }
+    catch (JWTVerificationException exception){
+      return false;
     }
   }
 

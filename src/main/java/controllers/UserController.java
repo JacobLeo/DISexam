@@ -164,11 +164,9 @@ public class UserController {
     return affected;
   }
 
-  public static String authenticateUser (User user) {
+  public static User authenticateUser (User user) {
 
-    String token;
-
-    int id = 0;
+    User foundUser = null;
 
     if (dbCon == null){
       dbCon = new DatabaseController();
@@ -180,7 +178,6 @@ public class UserController {
 
     // Actually do the query
     ResultSet rs = dbCon.query(sql);
-    User foundUser = null;
 
     try {
       // Get first object, since we only have one
@@ -193,33 +190,29 @@ public class UserController {
                         rs.getString("password"),
                         rs.getString("email"));
 
-        Algorithm algorithm = Algorithm.HMAC256("secret");
-        token = JWT.create()
-                .withIssuer("auth0")
-                .sign(algorithm);
         
-        return token;
+        return foundUser;
 
       } else {
-        return null;
+        return foundUser;
       }
     } catch (SQLException ex) {
       System.out.println(ex.getMessage());
     }
 
     // Return null
-    return null;
+    return foundUser;
 
   }
 
 
-  public static Boolean deleteUser (int userId){
+  public static Boolean deleteUser (int id){
 
     if (dbCon == null){
       dbCon = new DatabaseController();
     }
 
-    boolean affected = dbCon.update("DELETE FROM user WHERE id = " + userId );
+    boolean affected = dbCon.update("DELETE FROM user WHERE id = " + id);
 
     return affected;
 
