@@ -42,7 +42,7 @@ public class UserEndpoints {
 
     // Encrypted the json file with XOR method from utils
     //json = Encryption.encryptDecryptXOR(json);
-
+    
     // TODO: What should happen if something breaks down? FIX
 
     if (!json.isEmpty()){
@@ -170,14 +170,18 @@ public class UserEndpoints {
 
     User choosenUser = new Gson().fromJson(body, User.class);
 
-    boolean affected = UserController.updateUser(choosenUser);
 
-    if (affected){
-      String json = new Gson().toJson(choosenUser);
-      return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity(json).build();
+    if(verifyToken(choosenUser.getToken(), choosenUser)) {
+      boolean affected = UserController.updateUser(choosenUser);
+      if (affected) {
+        String json = new Gson().toJson(choosenUser);
+        return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity(json).build();
+      } else {
+        return Response.status(400).entity("Could not update user").build();
+      }
     }
     else {
-      return Response.status(400).entity("Could not update user").build();
+      return Response.status(401).entity("Unathorized access").build();
     }
   }
 
