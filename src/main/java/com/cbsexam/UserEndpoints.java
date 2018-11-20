@@ -41,7 +41,7 @@ public class UserEndpoints {
     String json = new Gson().toJson(user);
 
     // Encrypted the json file with XOR method from utils
-    //json = Encryption.encryptDecryptXOR(json);
+    json = Encryption.encryptDecryptXOR(json);
     
     // TODO: What should happen if something breaks down? FIX
 
@@ -185,7 +185,7 @@ public class UserEndpoints {
     }
   }
 
-  public boolean verifyToken (String token, User user){
+  private boolean verifyToken (String token, User user){
     try {
       Algorithm algorithm = Algorithm.HMAC256(Config.getTOKENKEY());
       JWTVerifier verifier = JWT.require(algorithm)

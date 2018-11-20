@@ -24,6 +24,8 @@ public final class Config {
   private static long USER_TTL;
   private static String SALT;
   private static String TOKENKEY;
+  private static String ENCRYPTIONKEY1;
+  private static String ENCRYPTIONKEY2;
 
   public static long getProductTtl() {
     return PRODUCT_TTL;
@@ -85,6 +87,14 @@ public final class Config {
     return TOKENKEY;
   }
 
+  public static String getENCRYPTIONKEY1() {
+    return ENCRYPTIONKEY1;
+  }
+
+  public static String getENCRYPTIONKEY2() {
+    return ENCRYPTIONKEY2;
+  }
+
   public static void initializeConfig() throws IOException {
 
     // Init variables to parse JSON
@@ -123,5 +133,7 @@ public final class Config {
     USER_TTL =  json.get("USER_TTL").getAsLong();
     SALT = json.get("SALT").getAsString();
     TOKENKEY = json.get("TOKENKEY").getAsString();
+    ENCRYPTIONKEY1 = json.get("ENCRYPTIONKEY1").getAsString();
+    ENCRYPTIONKEY2 = json.get("ENCRYPTIONKEY2").getAsString();
   }
 }
