@@ -127,30 +127,6 @@ public class DatabaseController {
     return result;
   }
 
-  public int delete (String sql){
-
-    if (connection == null)
-      connection = getConnection();
-
-    PreparedStatement statement = null;
-    int result = 0;
-
-    try {
-      statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-
-      result = statement.executeUpdate();
-
-      ResultSet generatedKey = statement.getGeneratedKeys();
-
-      if (generatedKey.next()) {
-        return generatedKey.getInt(1);
-      }
-    }
-    catch (SQLException e) {
-      e.printStackTrace();
-    }
-    return result;
-  }
 
 
   public boolean update (String sql) {

@@ -3,6 +3,7 @@ package controllers;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import model.*;
 import utils.Log;
@@ -47,6 +48,8 @@ public class OrderController {
     Product product = null;
     Address billingAddress = null;
     Address shippingAddress = null;
+    HashMap map = new HashMap<Integer, Order>();
+    int order_id;
 
     try {
       if (rs.next()) {
@@ -59,6 +62,8 @@ public class OrderController {
 
         // Create an object instance of order from the database data
 
+
+        /*
         user =
                 new User(
                         rs.getInt("user_id"),
@@ -113,6 +118,8 @@ public class OrderController {
                 rs.getFloat("order_total"),
                 rs.getLong("created_at"),
                 rs.getLong("updated_at"));
+
+                */
 
         // Returns the build order
         return order; 

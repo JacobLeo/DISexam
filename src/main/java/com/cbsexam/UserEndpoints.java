@@ -42,7 +42,7 @@ public class UserEndpoints {
 
     // Encrypted the json file with XOR method from utils
     json = Encryption.encryptDecryptXOR(json);
-    
+
     // TODO: What should happen if something breaks down? FIX
 
     if (!json.isEmpty()){
