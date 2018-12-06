@@ -72,7 +72,7 @@ public final class Hashing {
   }
 
   private static String getSalt() {
-    // Gets salt from config.json 
+    // Gets salt from config.json
     return Config.getSalt();
   }
 }

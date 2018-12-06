@@ -41,29 +41,22 @@ public class OrderController {
 
     // Do the query in the database and create an empty object for the results
     ResultSet rs = dbCon.query(sql);
+    // New order object
     Order order = null;
+    // User object
     User user = null;
-    ArrayList<LineItem> lineItems = new ArrayList<>();
+    // New lineitem object
     LineItem lineItem = null;
-    Product product = null;
+    // New adress object
     Address billingAddress = null;
+    // New adress object
     Address shippingAddress = null;
-    HashMap map = new HashMap<Integer, Order>();
-    int order_id;
 
     try {
       if (rs.next()) {
 
-        // Perhaps we could optimize things a bit here and get rid of nested queries.
-        /*User user = UserController.getUser(rs.getInt("user_id"));
         ArrayList<LineItem> lineItems = LineItemController.getLineItemsForOrder(rs.getInt("id"));
-        Address billingAddress = AddressController.getAddress(rs.getInt("billing_address_id"));
-        Address shippingAddress = AddressController.getAddress(rs.getInt("shipping_address_id")); */
-
-        // Create an object instance of order from the database data
-
-
-        /*
+        // Creating new user object
         user =
                 new User(
                         rs.getInt("user_id"),
@@ -71,25 +64,7 @@ public class OrderController {
                         rs.getString("last_name"),
                         rs.getString("password"),
                         rs.getString("email"));
-
-        product =
-                new Product(
-                        rs.getInt("id"),
-                        rs.getString("name"),
-                        rs.getString("sku"),
-                        rs.getInt("price"),
-                        rs.getString("description"),
-                        rs.getInt("stock"));
-
-
-          lineItems.add(
-                  new LineItem(
-                          rs.getInt("id"),
-                          product,
-                          rs.getInt("quantity"),
-                          rs.getFloat("price")));
-
-
+        // Creating new billingAddress
         billingAddress =
                 new Address(
                           rs.getInt("ba.id"),
@@ -98,7 +73,7 @@ public class OrderController {
                           rs.getString("ba.city"),
                           rs.getString("ba.zipcode")
                 );
-
+        // Creating new Shippingaddress
         shippingAddress =
                 new Address(
                         rs.getInt("sa.id"),
@@ -107,7 +82,7 @@ public class OrderController {
                         rs.getString("sa.city"),
                         rs.getString("sa.zipcode")
                 );
-
+        // Creating new order
         order =
             new Order(
                 rs.getInt("id"),
@@ -119,7 +94,7 @@ public class OrderController {
                 rs.getLong("created_at"),
                 rs.getLong("updated_at"));
 
-                */
+
 
         // Returns the build order
         return order; 
@@ -141,42 +116,81 @@ public class OrderController {
    */
   public static ArrayList<Order> getOrders() {
 
+    // check for connection
     if (dbCon == null) {
       dbCon = new DatabaseController();
-      System.out.println("ingen connect");
     }
     // Orders instead of order in sql statement
 
-    String sql = "SELECT * FROM orders";
 
+    String sql = "SELECT * FROM orders\n" +
+            "inner join\n" +
+            "user ON orders.user_id = user.id\n" +
+            "inner join \n" +
+            "line_item ON orders.id = line_item.order_id \n" +
+            "inner join \n" +
+            "address AS ba ON orders.billing_address_id = ba.id\n" +
+            "inner join \n" +
+            "address as sa ON orders.shipping_address_id = sa.id\n" +
+            "inner join \n" +
+            "product ON line_item.product_id  = product.id";
 
-    ResultSet rs = dbCon.query(sql);
     ArrayList<Order> orders = new ArrayList<Order>();
+    // Do the query in the database and create an empty object for the results
+    ResultSet rs = dbCon.query(sql);
+    // New order object
+    Order order = null;
+    // User object
+    User user = null;
+    // New lineitem object
+    LineItem lineItem = null;
+    // New adress object
+    Address billingAddress = null;
+    // New adress object
+    Address shippingAddress = null;
 
     try {
       while(rs.next()) {
-
-        // Perhaps we could optimize things a bit here and get rid of nested queries.
-         User user = UserController.getUser(rs.getInt("user_id"));
+        // Nested query ....
         ArrayList<LineItem> lineItems = LineItemController.getLineItemsForOrder(rs.getInt("id"));
-        Address billingAddress = AddressController.getAddress(rs.getInt("billing_address_id"));
-        Address shippingAddress = AddressController.getAddress(rs.getInt("shipping_address_id"));
-
-
-
-        // Create an order from the database data
-        Order order =
-            new Order(
-                rs.getInt("id"),
-                user,
-                lineItems,
-                billingAddress,
-                shippingAddress,
-                rs.getFloat("order_total"),
-                rs.getLong("created_at"),
-                rs.getLong("updated_at"));
-
-        // Add order to our list
+        // Creating new user object
+        user =
+                new User(
+                        rs.getInt("user_id"),
+                        rs.getString("first_name"),
+                        rs.getString("last_name"),
+                        rs.getString("password"),
+                        rs.getString("email"));
+        // Creating new billingAddress
+        billingAddress =
+                new Address(
+                        rs.getInt("ba.id"),
+                        rs.getString("ba.name"),
+                        rs.getString("ba.street_address"),
+                        rs.getString("ba.city"),
+                        rs.getString("ba.zipcode")
+                );
+        // Creating new shippingAddress
+        shippingAddress =
+                new Address(
+                        rs.getInt("sa.id"),
+                        rs.getString("sa.name"),
+                        rs.getString("sa.street_address"),
+                        rs.getString("sa.city"),
+                        rs.getString("sa.zipcode")
+                );
+        // Creating new order
+        order =
+                new Order(
+                        rs.getInt("id"),
+                        user,
+                        lineItems,
+                        billingAddress,
+                        shippingAddress,
+                        rs.getFloat("order_total"),
+                        rs.getLong("created_at"),
+                        rs.getLong("updated_at"));
+        // Adding order to arraylist
         orders.add(order);
 
       }
