@@ -147,16 +147,19 @@ public class UserController {
 
 
   public static boolean updateUser (User user){
+    // Writting log
     Log.writeLog(UserController.class.getName(), user, "Updating", 0);
-
+    // Check db connection
     if (dbCon == null){
       dbCon = new DatabaseController();
     }
 
-
+    // Hashing password
     String newPassword = Hashing.sha(user.getPassword());
+    // Setting hashed password as password
     user.setPassword(newPassword);
 
+    // SQL update statement
     boolean affected = dbCon.update("UPDATE USER SET first_name = " + "\'" + user.getFirstname() + "\',"
     + "  last_name = "+ "\'" + user.getLastname() + "\'," + " password = " + "\'" + user.getPassword() + "\'," +
             " email = " + "\'" + user.getEmail() + "\'" + "WHERE id = " + "\'" + user.getId() + "\'");
@@ -165,9 +168,9 @@ public class UserController {
   }
 
   public static User authenticateUser (User user) {
-
+    // Creating user object
     User foundUser = null;
-
+    // Check database connection
     if (dbCon == null){
       dbCon = new DatabaseController();
     }
@@ -190,10 +193,11 @@ public class UserController {
                         rs.getString("password"),
                         rs.getString("email"));
 
-        
+        // Returns user
         return foundUser;
 
       } else {
+        // If no user is found is is null
         return foundUser;
       }
     } catch (SQLException ex) {
@@ -207,13 +211,13 @@ public class UserController {
 
 
   public static Boolean deleteUser (int id){
-
+    // Check database connection
     if (dbCon == null){
       dbCon = new DatabaseController();
     }
-
+    // Delete sql statement
     boolean affected = dbCon.update("DELETE FROM user WHERE id = " + id);
-
+    // Returns boolean
     return affected;
 
   }

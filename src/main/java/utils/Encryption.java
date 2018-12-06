@@ -9,6 +9,7 @@ public final class Encryption {
 
       // The key is predefined and hidden in code
       // TODO: Create a more complex code and store it somewhere better
+      // Encryptionkey is saved in config.json
       char[] key1 = Config.getENCRYPTIONKEY1().toCharArray();
       char[] key2 = Config.getENCRYPTIONKEY2().toCharArray();
 

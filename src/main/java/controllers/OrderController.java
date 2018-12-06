@@ -143,6 +143,7 @@ public class OrderController {
 
     if (dbCon == null) {
       dbCon = new DatabaseController();
+      System.out.println("ingen connect");
     }
     // Orders instead of order in sql statement
 

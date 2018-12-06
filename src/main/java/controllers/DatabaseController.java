@@ -93,6 +93,7 @@ public class DatabaseController {
       connection = getConnection();
 
     try {
+      //Turning autocommit off
       connection.setAutoCommit(false);
       // Build the statement up in a safe way
       PreparedStatement statement =
@@ -100,6 +101,7 @@ public class DatabaseController {
 
       // Execute query
       result = statement.executeUpdate();
+      // Commiting database change
       connection.commit();
 
       // Get our key back in order to update the user
@@ -117,6 +119,7 @@ public class DatabaseController {
     }
     finally {
       try {
+        // Turning back on autocommit
         connection.setAutoCommit(true);
       } catch (SQLException e) {
         e.printStackTrace();
@@ -130,21 +133,23 @@ public class DatabaseController {
 
 
   public boolean update (String sql) {
-
+    // Check that we have connection
     if (connection == null) {
       connection = getConnection();
   }
     try {
+      //Building statement
       PreparedStatement stm = connection.prepareStatement(sql);
-
+      // Executing statement
      int affectedrows = stm.executeUpdate();
 
+     // Returning boolean value
      return affectedrows == 1;
 
     } catch (SQLException e) {
       e.printStackTrace();
     }
-
+    // Returning false
     return false;
   }
 }

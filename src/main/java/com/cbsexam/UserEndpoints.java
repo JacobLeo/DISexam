@@ -45,9 +45,10 @@ public class UserEndpoints {
 
     // TODO: What should happen if something breaks down? FIX
 
+    // If the json file is empty 400 fail will be returned
     if (!json.isEmpty()){
       // Return the user with the status code 200
-      return Response.status(404).type(MediaType.APPLICATION_JSON_TYPE).entity(json).build();
+      return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity(json).build();
     }
 
     else {
