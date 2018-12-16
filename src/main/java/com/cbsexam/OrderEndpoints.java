@@ -81,11 +81,12 @@ public class OrderEndpoints {
     String json = new Gson().toJson(createdOrder);
 
     // Encrypts our json file with the encryptDecryptXOR method from utils
-    json = Encryption.encryptDecryptXOR(json);
+    //json = Encryption.encryptDecryptXOR(json);
 
     // Return the data to the user
     if (createdOrder != null) {
       // Return a response with status 200 and JSON as type
+      orderCache.getOrders(true);
       return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity(json).build();
     } else {
 
