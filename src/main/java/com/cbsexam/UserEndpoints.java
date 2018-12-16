@@ -25,6 +25,7 @@ import utils.Log;
 public class UserEndpoints {
 
   private static UserCache userCache = new UserCache();
+  private static boolean forceupdate = false;
   /**
    * @param idUser
    * @return Responses
@@ -65,8 +66,9 @@ public class UserEndpoints {
     Log.writeLog(this.getClass().getName(), this, "Get all users", 0);
 
     // Get a list of users
-    ArrayList<User> users = userCache.getUsers(false);
+    ArrayList<User> users = userCache.getUsers(forceupdate);
 
+    forceupdate = false;
     // TODO: Add Encryption to JSON FIX
     // Transfer users to json in order to return it to the user
     String json = new Gson().toJson(users);
@@ -92,6 +94,7 @@ public class UserEndpoints {
     // Get the user back with the added ID and return it to the user
     String json = new Gson().toJson(createUser);
 
+    forceupdate = false;
     // Return the data to the user
     if (createUser != null) {
       // Return a response with status 200 and JSON as type
@@ -150,6 +153,7 @@ public class UserEndpoints {
       boolean affected = UserController.deleteUser(choosenUser.getId());
 
       if (affected){
+        forceupdate = true;
         userCache.getUsers(true);
         return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity(choosenUser.getId() + " er nu slettet").build();
       }
@@ -175,6 +179,7 @@ public class UserEndpoints {
     if(verifyToken(choosenUser.getToken(), choosenUser)) {
       boolean affected = UserController.updateUser(choosenUser);
       if (affected) {
+        forceupdate = true;
         String json = new Gson().toJson(choosenUser);
         return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity(json).build();
       } else {

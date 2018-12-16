@@ -21,6 +21,7 @@ import utils.Encryption;
 public class OrderEndpoints {
 
   private static OrderCache orderCache = new OrderCache();
+  private static boolean forceupdate = false;
 
   /**
    * @param idOrder
@@ -53,7 +54,8 @@ public class OrderEndpoints {
   public Response getOrders() {
 
     // Call our controller-layer in order to get the order from the DB
-    ArrayList<Order> orders = orderCache.getOrders(false);
+    ArrayList<Order> orders = orderCache.getOrders(forceupdate);
+    forceupdate = false;
 
     // TODO: Add Encryption to JSON FIX
     // We convert the java object to json with GSON library imported in Maven
@@ -83,10 +85,11 @@ public class OrderEndpoints {
     // Encrypts our json file with the encryptDecryptXOR method from utils
     //json = Encryption.encryptDecryptXOR(json);
 
+    forceupdate = true;
+
     // Return the data to the user
     if (createdOrder != null) {
       // Return a response with status 200 and JSON as type
-      orderCache.getOrders(true);
       return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity(json).build();
     } else {
 
