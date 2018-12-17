@@ -143,12 +143,11 @@ public class OrderController {
     Order order = null;
     // User object
     User user = null;
-    // New lineitem object
-    LineItem lineItem = null;
     // New adress object
     Address billingAddress = null;
     // New adress object
     Address shippingAddress = null;
+
 
     try {
       while(rs.next()) {

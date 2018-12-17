@@ -26,7 +26,7 @@ public class OrderCache {
         // Otherwise we look at the age of the cache and figure out if we should update.
         // If the list is empty we also check for new products
 
-        if (forceUpdate || ((this.created + this.ttl) <= (System.currentTimeMillis()/1000L)) || this.orders == null) {
+        if (forceUpdate || ((this.created + this.ttl) <= (System.currentTimeMillis()/1000L)) || this.orders.isEmpty()) {
 
             // Gets orders and sets it
             this.orders = OrderController.getOrders();
