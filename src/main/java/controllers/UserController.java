@@ -25,8 +25,12 @@ public class UserController {
   public static User getUser(int id) {
 
     // Check for connection
-    if (dbCon == null) {
-      dbCon = new DatabaseController();
+    try {
+      if (dbCon.getConnection().isClosed()|| dbCon == null) {
+        dbCon = new DatabaseController();
+      }
+    } catch (SQLException e) {
+      e.printStackTrace();
     }
 
     // Build the query for DB
@@ -55,7 +59,13 @@ public class UserController {
     } catch (SQLException ex) {
       System.out.println(ex.getMessage());
     }
-
+    finally {
+      try {
+        dbCon.getConnection().close();
+      } catch (SQLException e) {
+        e.printStackTrace();
+      }
+    }
     // Return null
     return user;
   }
@@ -68,8 +78,12 @@ public class UserController {
   public static ArrayList<User> getUsers() {
 
     // Check for DB connection
-    if (dbCon == null) {
-      dbCon = new DatabaseController();
+    try {
+      if (dbCon.getConnection().isClosed()|| dbCon == null) {
+        dbCon = new DatabaseController();
+      }
+    } catch (SQLException e) {
+      e.printStackTrace();
     }
 
     // Build SQL
@@ -96,7 +110,13 @@ public class UserController {
     } catch (SQLException ex) {
       System.out.println(ex.getMessage());
     }
-
+    finally {
+      try {
+        dbCon.getConnection().close();
+      } catch (SQLException e) {
+        e.printStackTrace();
+      }
+    }
     // Return the list of users
     return users;
   }
@@ -110,8 +130,12 @@ public class UserController {
     user.setCreatedTime(System.currentTimeMillis() / 1000L);
 
     // Check for DB Connection
-    if (dbCon == null) {
-      dbCon = new DatabaseController();
+    try {
+      if (dbCon.getConnection().isClosed()|| dbCon == null) {
+        dbCon = new DatabaseController();
+      }
+    } catch (SQLException e) {
+      e.printStackTrace();
     }
 
     // Insert the user in the DB
@@ -141,17 +165,28 @@ public class UserController {
       return null;
     }
 
+    if (dbCon != null){
+      try {
+        dbCon.getConnection().close();
+      } catch (SQLException e) {
+        e.printStackTrace();
+      }
+    }
     // Return user
     return user;
   }
 
 
-  public static boolean updateUser (User user){
+  public static boolean updateUser (User user)  {
     // Writting log
     Log.writeLog(UserController.class.getName(), user, "Updating", 0);
     // Check db connection
-    if (dbCon == null){
-      dbCon = new DatabaseController();
+    try {
+      if (dbCon.getConnection().isClosed()|| dbCon == null) {
+        dbCon = new DatabaseController();
+      }
+    } catch (SQLException e) {
+      e.printStackTrace();
     }
 
     // Hashing password
@@ -164,6 +199,12 @@ public class UserController {
     + "  last_name = "+ "\'" + user.getLastname() + "\'," + " password = " + "\'" + user.getPassword() + "\'," +
             " email = " + "\'" + user.getEmail() + "\'" + "WHERE id = " + "\'" + user.getId() + "\'");
 
+
+    try {
+      dbCon.getConnection().close();
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
     return affected;
   }
 
@@ -171,8 +212,12 @@ public class UserController {
     // Creating user object
     User foundUser = null;
     // Check database connection
-    if (dbCon == null){
-      dbCon = new DatabaseController();
+    try {
+      if (dbCon.getConnection().isClosed()|| dbCon == null) {
+        dbCon = new DatabaseController();
+      }
+    } catch (SQLException e) {
+      e.printStackTrace();
     }
 
     // Build the query for DB
@@ -204,19 +249,36 @@ public class UserController {
       System.out.println(ex.getMessage());
     }
 
+    try {
+      dbCon.getConnection().close();
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+
     // Return null
     return foundUser;
 
   }
 
 
-  public static Boolean deleteUser (int id){
+  public static Boolean deleteUser (int id)  {
     // Check database connection
-    if (dbCon == null){
-      dbCon = new DatabaseController();
+    try {
+      if (dbCon.getConnection().isClosed()|| dbCon == null) {
+        dbCon = new DatabaseController();
+      }
+    } catch (SQLException e) {
+      e.printStackTrace();
     }
     // Delete sql statement
     boolean affected = dbCon.update("DELETE FROM user WHERE id = " + id);
+
+    try {
+      dbCon.getConnection().close();
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+
     // Returns boolean
     return affected;
 

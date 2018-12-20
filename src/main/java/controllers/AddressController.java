@@ -16,8 +16,12 @@ public class AddressController {
   public static Address getAddress(int id) {
 
     // Check for DB Connection
-    if (dbCon == null) {
-      dbCon = new DatabaseController();
+    try {
+      if (dbCon.getConnection().isClosed()|| dbCon == null) {
+        dbCon = new DatabaseController();
+      }
+    } catch (SQLException e) {
+      e.printStackTrace();
     }
 
     // Our SQL string
@@ -47,6 +51,13 @@ public class AddressController {
     } catch (SQLException ex) {
       System.out.println(ex.getMessage());
     }
+    finally {
+      try {
+        dbCon.getConnection().close();
+      } catch (SQLException e) {
+        e.printStackTrace();
+      }
+    }
 
     // Returns null if we can't find anything.
     return address;
@@ -58,8 +69,12 @@ public class AddressController {
     Log.writeLog(ProductController.class.getName(), address, "Actually creating a line item in DB", 0);
 
     // Check for DB Connection
-    if (dbCon == null) {
-      dbCon = new DatabaseController();
+    try {
+      if (dbCon.getConnection().isClosed()|| dbCon == null) {
+        dbCon = new DatabaseController();
+      }
+    } catch (SQLException e) {
+      e.printStackTrace();
     }
 
     // Insert the product in the DB
@@ -82,6 +97,11 @@ public class AddressController {
       return null;
     }
 
+    try {
+      dbCon.getConnection().close();
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
     // Return product, will be null at this point
     return address;
   }

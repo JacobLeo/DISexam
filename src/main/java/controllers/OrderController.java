@@ -22,11 +22,15 @@ public class OrderController {
   public static Order getOrder(int id) {
 
     // check for connection
-    if (dbCon == null) {
-      dbCon = new DatabaseController();
-    }
+      try {
+          if (dbCon.getConnection().isClosed()|| dbCon == null) {
+              dbCon = new DatabaseController();
+          }
+      } catch (SQLException e) {
+          e.printStackTrace();
+      }
 
-    // Build SQL string to query
+      // Build SQL string to query
     String sql = "SELECT * FROM orders\n" +
             "inner join\n" +
             "user ON orders.user_id = user.id\n" +
@@ -106,7 +110,13 @@ public class OrderController {
       System.out.println(ex.getMessage());
     }
 
-    // Returns null
+      try {
+          dbCon.getConnection().close();
+      } catch (SQLException e) {
+          e.printStackTrace();
+      }
+
+      // Returns null
     return order;
   }
 
@@ -118,10 +128,14 @@ public class OrderController {
    public static ArrayList<Order> getOrders() {
 
     // check for connection
-    if (dbCon == null) {
-      dbCon = new DatabaseController();
-    }
-    // Orders instead of order in sql statement
+       try {
+           if (dbCon.getConnection().isClosed()|| dbCon == null) {
+               dbCon = new DatabaseController();
+           }
+       } catch (SQLException e) {
+           e.printStackTrace();
+       }
+       // Orders instead of order in sql statement
 
     String sql = "SELECT * FROM orders\n" +
             "inner join\n" +
@@ -197,7 +211,13 @@ public class OrderController {
       System.out.println(ex.getMessage());
     }
 
-    // return the orders
+       try {
+           dbCon.getConnection().close();
+       } catch (SQLException e) {
+           e.printStackTrace();
+       }
+
+       // return the orders
     return orders;
   }
 
@@ -211,12 +231,15 @@ public class OrderController {
     order.setCreatedAt(System.currentTimeMillis() / 1000L);
     order.setUpdatedAt(System.currentTimeMillis() / 1000L);
 
-    // Check for DB Connection
-    if (dbCon == null) {
-      dbCon = new DatabaseController();
-    }
+      try {
+          if (dbCon.getConnection().isClosed()|| dbCon == null) {
+              dbCon = new DatabaseController();
+          }
+      } catch (SQLException e) {
+          e.printStackTrace();
+      }
 
-    // Save addresses to database and save them back to initial order instance
+      // Save addresses to database and save them back to initial order instance
     order.setBillingAddress(AddressController.createAddress(order.getBillingAddress()));
     order.setShippingAddress(AddressController.createAddress(order.getShippingAddress()));
 
@@ -257,7 +280,13 @@ public class OrderController {
 
     order.setLineItems(items);
 
-    // Return order
+      try {
+          dbCon.getConnection().close();
+      } catch (SQLException e) {
+          e.printStackTrace();
+      }
+
+      // Return order
     return order;
   }
 }

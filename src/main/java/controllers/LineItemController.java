@@ -18,8 +18,12 @@ public class LineItemController {
   public static ArrayList<LineItem> getLineItemsForOrder(int orderID) {
 
     // Check for DB Connection
-    if (dbCon == null) {
-      dbCon = new DatabaseController();
+    try {
+      if (dbCon.getConnection().isClosed()|| dbCon == null) {
+        dbCon = new DatabaseController();
+      }
+    } catch (SQLException e) {
+      e.printStackTrace();
     }
 
     // Construct our SQL
@@ -51,6 +55,13 @@ public class LineItemController {
     } catch (SQLException ex) {
       System.out.println(ex.getMessage());
     }
+    finally {
+      try {
+        dbCon.getConnection().close();
+      } catch (SQLException e) {
+        e.printStackTrace();
+      }
+    }
 
     // Return the list, which might be empty
     return items;
@@ -62,8 +73,12 @@ public class LineItemController {
     Log.writeLog(ProductController.class.getName(), lineItem, "Actually creating a line item in DB", 0);
 
     // Check for DB Connection
-    if (dbCon == null) {
-      dbCon = new DatabaseController();
+    try {
+      if (dbCon.getConnection().isClosed()|| dbCon == null) {
+        dbCon = new DatabaseController();
+      }
+    } catch (SQLException e) {
+      e.printStackTrace();
     }
 
     // Get the ID of the product, since the user will not send it to us.
@@ -90,6 +105,12 @@ public class LineItemController {
 
       // Return null if product has not been inserted into database
       return null;
+    }
+
+    try {
+      dbCon.getConnection().close();
+    } catch (SQLException e) {
+      e.printStackTrace();
     }
 
     // Return product

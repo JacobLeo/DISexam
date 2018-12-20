@@ -25,24 +25,27 @@ public class DatabaseController {
    */
   public static Connection getConnection() {
     try {
-      // Set the dataabase connect with the data from the config
-      String url =
-          "jdbc:mysql://"
-              + Config.getDatabaseHost()
-              + ":"
-              + Config.getDatabasePort()
-              + "/"
-              + Config.getDatabaseName()
-              + "?serverTimezone=CET";
+        // Set the dataabase connect with the data from the config
+        String url =
+                "jdbc:mysql://"
+                        + Config.getDatabaseHost()
+                        + ":"
+                        + Config.getDatabasePort()
+                        + "/"
+                        + Config.getDatabaseName()
+                        + "?serverTimezone=CET";
 
-      String user = Config.getDatabaseUsername();
-      String password = Config.getDatabasePassword();
+        String user = Config.getDatabaseUsername();
+        String password = Config.getDatabasePassword();
 
-      // Register the driver in order to use it
-      DriverManager.registerDriver(new com.mysql.jdbc.Driver());
 
-      // create a connection to the database
-      connection = DriverManager.getConnection(url, user, password);
+        // Register the driver in order to use it
+        DriverManager.registerDriver(new com.mysql.jdbc.Driver());
+
+        // create a connection to the database
+        connection = DriverManager.getConnection(url, user, password);
+
+
 
     } catch (SQLException e) {
       System.out.println(e.getMessage());
@@ -59,16 +62,18 @@ public class DatabaseController {
   public ResultSet query(String sql) {
 
     // Check if we have a connection
-    if (connection == null)
-      connection = getConnection();
+
+      if (connection == null) {
+        connection = getConnection(); }
 
 
     // We set the resultset as empty.
     ResultSet rs = null;
+    PreparedStatement stmt = null;
 
     try {
       // Build the statement as a prepared statement
-      PreparedStatement stmt = connection.prepareStatement(sql);
+      stmt = connection.prepareStatement(sql);
 
       // Actually fire the query to the DB
       rs = stmt.executeQuery();
@@ -117,14 +122,6 @@ public class DatabaseController {
         e1.printStackTrace();
       }
     }
-    finally {
-      try {
-        // Turning back on autocommit
-        connection.setAutoCommit(true);
-      } catch (SQLException e) {
-        e.printStackTrace();
-      }
-    }
 
     // Return the resultset which at this point will be null
     return result;
@@ -132,7 +129,7 @@ public class DatabaseController {
 
 
 
-  public boolean update (String sql) {
+  public boolean update (String sql)  {
     // Check that we have connection
     if (connection == null) {
       connection = getConnection();
