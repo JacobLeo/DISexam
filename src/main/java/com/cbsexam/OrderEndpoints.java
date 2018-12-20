@@ -42,7 +42,7 @@ public class OrderEndpoints {
     String json = new Gson().toJson(order);
 
     // Encrypted the json file with XOR method from utils
-    //json = Encryption.encryptDecryptXOR(json);
+    json = Encryption.encryptDecryptXOR(json);
 
     // Return a response with status 200 and JSON as type
     return Response.status(200).type(MediaType.APPLICATION_JSON).entity(json).build();
@@ -62,7 +62,7 @@ public class OrderEndpoints {
     String json = new Gson().toJson(orders);
 
     // Encrypted the json file with XOR method from utils
-    //json = Encryption.encryptDecryptXOR(json);
+    json = Encryption.encryptDecryptXOR(json);
 
     // Return a response with status 200 and JSON as type
     return Response.status(200).type(MediaType.APPLICATION_JSON).entity(json).build();
@@ -83,7 +83,7 @@ public class OrderEndpoints {
     String json = new Gson().toJson(createdOrder);
 
     // Encrypts our json file with the encryptDecryptXOR method from utils
-    //json = Encryption.encryptDecryptXOR(json);
+    json = Encryption.encryptDecryptXOR(json);
 
     forceupdate = true;
 

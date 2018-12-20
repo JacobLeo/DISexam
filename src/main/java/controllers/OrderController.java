@@ -115,14 +115,13 @@ public class OrderController {
    *
    * @return
    */
-  public static ArrayList<Order> getOrders() {
+   public static ArrayList<Order> getOrders() {
 
     // check for connection
     if (dbCon == null) {
       dbCon = new DatabaseController();
     }
     // Orders instead of order in sql statement
-
 
     String sql = "SELECT * FROM orders\n" +
             "inner join\n" +
@@ -202,6 +201,7 @@ public class OrderController {
     return orders;
   }
 
+
   public static Order createOrder(Order order) {
 
     // Write in log that we've reach this step
@@ -223,7 +223,7 @@ public class OrderController {
     // Save the user to the database and save them back to initial order instance
     order.setCustomer(UserController.createUser(order.getCustomer()));
 
-    // TODO: Enable transactions in order for us to not save the order if somethings fails for some of the other inserts.
+    // TODO: Enable transactions in order for us to not save the order if somethings fails for some of the other inserts fix (insert DBcontroller)
 
     // Insert the product in the DB
     int orderID = dbCon.insert(
