@@ -23,7 +23,7 @@ public class OrderController {
 
     // check for connection
       try {
-          if (dbCon.getConnection().isClosed()|| dbCon == null) {
+          if (DatabaseController.getConnection().isClosed()|| dbCon == null) {
               dbCon = new DatabaseController();
           }
       } catch (SQLException e) {
@@ -111,7 +111,7 @@ public class OrderController {
     }
 
       try {
-          dbCon.getConnection().close();
+          DatabaseController.getConnection().close();
       } catch (SQLException e) {
           e.printStackTrace();
       }
@@ -129,7 +129,7 @@ public class OrderController {
 
     // check for connection
        try {
-           if (dbCon.getConnection().isClosed()|| dbCon == null) {
+           if (DatabaseController.getConnection().isClosed()|| dbCon == null) {
                dbCon = new DatabaseController();
            }
        } catch (SQLException e) {
@@ -212,7 +212,7 @@ public class OrderController {
     }
 
        try {
-           dbCon.getConnection().close();
+           DatabaseController.getConnection().close();
        } catch (SQLException e) {
            e.printStackTrace();
        }
@@ -232,7 +232,7 @@ public class OrderController {
     order.setUpdatedAt(System.currentTimeMillis() / 1000L);
 
       try {
-          if (dbCon.getConnection().isClosed()|| dbCon == null) {
+          if (DatabaseController.getConnection().isClosed()|| dbCon == null) {
               dbCon = new DatabaseController();
           }
       } catch (SQLException e) {
@@ -281,7 +281,7 @@ public class OrderController {
     order.setLineItems(items);
 
       try {
-          dbCon.getConnection().close();
+          DatabaseController.getConnection().close();
       } catch (SQLException e) {
           e.printStackTrace();
       }

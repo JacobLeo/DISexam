@@ -18,7 +18,7 @@ public class ProductController {
 
     // check for connection
     try {
-      if (dbCon.getConnection().isClosed()|| dbCon == null) {
+      if (DatabaseController.getConnection().isClosed()|| dbCon == null) {
         dbCon = new DatabaseController();
       }
     } catch (SQLException e) {
@@ -54,7 +54,7 @@ public class ProductController {
     }
 
     try {
-      dbCon.getConnection().close();
+      DatabaseController.getConnection().close();
     } catch (SQLException e) {
       e.printStackTrace();
     }
@@ -66,7 +66,7 @@ public class ProductController {
   public static Product getProductBySku(String sku) {
 
     try {
-      if (dbCon.getConnection().isClosed()|| dbCon == null) {
+      if (DatabaseController.getConnection().isClosed()|| dbCon == null) {
         dbCon = new DatabaseController();
       }
     } catch (SQLException e) {
@@ -98,7 +98,7 @@ public class ProductController {
     }
 
     try {
-      dbCon.getConnection().close();
+      DatabaseController.getConnection().close();
     } catch (SQLException e) {
       e.printStackTrace();
     }
@@ -114,7 +114,7 @@ public class ProductController {
   public static ArrayList<Product> getProducts() {
 
     try {
-      if (dbCon.getConnection().isClosed()|| dbCon == null) {
+      if (DatabaseController.getConnection().isClosed()|| dbCon == null) {
         dbCon = new DatabaseController();
       }
     } catch (SQLException e) {
@@ -146,7 +146,7 @@ public class ProductController {
     }
 
     try {
-      dbCon.getConnection().close();
+      DatabaseController.getConnection().close();
     } catch (SQLException e) {
       e.printStackTrace();
     }
@@ -164,7 +164,7 @@ public class ProductController {
 
     // Check for DB Connection
     try {
-      if (dbCon.getConnection().isClosed()|| dbCon == null) {
+      if (DatabaseController.getConnection().isClosed()|| dbCon == null) {
         dbCon = new DatabaseController();
       }
     } catch (SQLException e) {
@@ -196,7 +196,7 @@ public class ProductController {
     }
 
     try {
-      dbCon.getConnection().close();
+      DatabaseController.getConnection().close();
     } catch (SQLException e) {
       e.printStackTrace();
     }

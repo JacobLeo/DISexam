@@ -19,7 +19,7 @@ public class LineItemController {
 
     // Check for DB Connection
     try {
-      if (dbCon.getConnection().isClosed()|| dbCon == null) {
+      if (DatabaseController.getConnection().isClosed()|| dbCon == null) {
         dbCon = new DatabaseController();
       }
     } catch (SQLException e) {
@@ -57,7 +57,7 @@ public class LineItemController {
     }
     finally {
       try {
-        dbCon.getConnection().close();
+        DatabaseController.getConnection().close();
       } catch (SQLException e) {
         e.printStackTrace();
       }
@@ -74,7 +74,7 @@ public class LineItemController {
 
     // Check for DB Connection
     try {
-      if (dbCon.getConnection().isClosed()|| dbCon == null) {
+      if (DatabaseController.getConnection().isClosed()|| dbCon == null) {
         dbCon = new DatabaseController();
       }
     } catch (SQLException e) {
@@ -108,7 +108,7 @@ public class LineItemController {
     }
 
     try {
-      dbCon.getConnection().close();
+      DatabaseController.getConnection().close();
     } catch (SQLException e) {
       e.printStackTrace();
     }

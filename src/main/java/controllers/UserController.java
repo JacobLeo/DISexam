@@ -26,7 +26,7 @@ public class UserController {
 
     // Check for connection
     try {
-      if (dbCon.getConnection().isClosed()|| dbCon == null) {
+      if (DatabaseController.getConnection().isClosed()|| dbCon == null) {
         dbCon = new DatabaseController();
       }
     } catch (SQLException e) {
@@ -61,7 +61,7 @@ public class UserController {
     }
     finally {
       try {
-        dbCon.getConnection().close();
+        DatabaseController.getConnection().close();
       } catch (SQLException e) {
         e.printStackTrace();
       }
@@ -79,7 +79,7 @@ public class UserController {
 
     // Check for DB connection
     try {
-      if (dbCon.getConnection().isClosed()|| dbCon == null) {
+      if (DatabaseController.getConnection().isClosed()|| dbCon == null) {
         dbCon = new DatabaseController();
       }
     } catch (SQLException e) {
@@ -112,7 +112,7 @@ public class UserController {
     }
     finally {
       try {
-        dbCon.getConnection().close();
+        DatabaseController.getConnection().close();
       } catch (SQLException e) {
         e.printStackTrace();
       }
@@ -131,7 +131,7 @@ public class UserController {
 
     // Check for DB Connection
     try {
-      if (dbCon.getConnection().isClosed()|| dbCon == null) {
+      if (DatabaseController.getConnection().isClosed()|| dbCon == null) {
         dbCon = new DatabaseController();
       }
     } catch (SQLException e) {
@@ -167,7 +167,7 @@ public class UserController {
 
     if (dbCon != null){
       try {
-        dbCon.getConnection().close();
+        DatabaseController.getConnection().close();
       } catch (SQLException e) {
         e.printStackTrace();
       }
@@ -182,7 +182,7 @@ public class UserController {
     Log.writeLog(UserController.class.getName(), user, "Updating", 0);
     // Check db connection
     try {
-      if (dbCon.getConnection().isClosed()|| dbCon == null) {
+      if (DatabaseController.getConnection().isClosed()|| dbCon == null) {
         dbCon = new DatabaseController();
       }
     } catch (SQLException e) {
@@ -201,7 +201,7 @@ public class UserController {
 
 
     try {
-      dbCon.getConnection().close();
+      DatabaseController.getConnection().close();
     } catch (SQLException e) {
       e.printStackTrace();
     }
@@ -213,7 +213,7 @@ public class UserController {
     User foundUser = null;
     // Check database connection
     try {
-      if (dbCon.getConnection().isClosed()|| dbCon == null) {
+      if (DatabaseController.getConnection().isClosed()|| dbCon == null) {
         dbCon = new DatabaseController();
       }
     } catch (SQLException e) {
@@ -250,7 +250,7 @@ public class UserController {
     }
 
     try {
-      dbCon.getConnection().close();
+      DatabaseController.getConnection().close();
     } catch (SQLException e) {
       e.printStackTrace();
     }
@@ -264,7 +264,7 @@ public class UserController {
   public static Boolean deleteUser (int id)  {
     // Check database connection
     try {
-      if (dbCon.getConnection().isClosed()|| dbCon == null) {
+      if (DatabaseController.getConnection().isClosed()|| dbCon == null) {
         dbCon = new DatabaseController();
       }
     } catch (SQLException e) {
@@ -274,7 +274,7 @@ public class UserController {
     boolean affected = dbCon.update("DELETE FROM user WHERE id = " + id);
 
     try {
-      dbCon.getConnection().close();
+      DatabaseController.getConnection().close();
     } catch (SQLException e) {
       e.printStackTrace();
     }

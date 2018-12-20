@@ -17,7 +17,7 @@ public class AddressController {
 
     // Check for DB Connection
     try {
-      if (dbCon.getConnection().isClosed()|| dbCon == null) {
+      if (DatabaseController.getConnection().isClosed()|| dbCon == null) {
         dbCon = new DatabaseController();
       }
     } catch (SQLException e) {
@@ -53,7 +53,7 @@ public class AddressController {
     }
     finally {
       try {
-        dbCon.getConnection().close();
+        DatabaseController.getConnection().close();
       } catch (SQLException e) {
         e.printStackTrace();
       }
@@ -70,7 +70,7 @@ public class AddressController {
 
     // Check for DB Connection
     try {
-      if (dbCon.getConnection().isClosed()|| dbCon == null) {
+      if (DatabaseController.getConnection().isClosed()|| dbCon == null) {
         dbCon = new DatabaseController();
       }
     } catch (SQLException e) {
@@ -98,7 +98,7 @@ public class AddressController {
     }
 
     try {
-      dbCon.getConnection().close();
+      DatabaseController.getConnection().close();
     } catch (SQLException e) {
       e.printStackTrace();
     }
